@@ -1,0 +1,4 @@
+package: github.com/sky0621/go-lib
+import:
+- package: github.com/Sirupsen/logrus
+  version: ~0.11.2
