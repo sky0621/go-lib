@@ -1,8 +1,9 @@
 package log
 
 import (
-	"github.com/Sirupsen/logrus"
 	"io"
+
+	"github.com/Sirupsen/logrus"
 )
 
 // Level ...
@@ -26,6 +27,7 @@ const (
 // Logger ...
 type Logger struct {
 	silent        bool
+	appName       string
 	entry         *logrus.Entry
 	levelFuncMap  map[Level]func(...interface{})
 	levelFuncfMap map[Level]func(string, ...interface{})
@@ -65,8 +67,8 @@ func WithOutput(out io.Writer) Option {
 // NewLogger ...
 func NewLogger(appName string, options ...Option) (*Logger, error) {
 	log := &Logger{
-		silent: false,
-		entry:  logrus.WithField("appName", appName),
+		silent:  false,
+		appName: appName,
 	}
 	log.levelFuncMap = map[Level]func(...interface{}){
 		D: func(args ...interface{}) { log.entry.Debug(args...) },
@@ -85,7 +87,7 @@ func NewLogger(appName string, options ...Option) (*Logger, error) {
 		P: func(format string, args ...interface{}) { log.entry.Panicf(format, args...) },
 	}
 
-	logrus.SetFormatter(&logrus.JSONFormatter{TimestampFormat: "2017-02-08 01:28:00"})
+	logrus.SetFormatter(&logrus.JSONFormatter{})
 
 	for _, option := range options {
 		err := option(log)
@@ -97,12 +99,24 @@ func NewLogger(appName string, options ...Option) (*Logger, error) {
 	return log, nil
 }
 
-// WithFields ...
-func (l *Logger) WithFields(fields map[string]interface{}) {
+// WithField ...
+func (l *Logger) WithField(key string, field interface{}) *Logger {
 	if l == nil {
-		return
+		return nil
 	}
+	l.initEntry()
+	l.entry = l.entry.WithField(key, field)
+	return l
+}
+
+// WithFields ...
+func (l *Logger) WithFields(fields map[string]interface{}) *Logger {
+	if l == nil {
+		return nil
+	}
+	l.initEntry()
 	l.entry = l.entry.WithFields(fields)
+	return l
 }
 
 // Log ...
@@ -110,7 +124,9 @@ func (l *Logger) Log(level Level, args ...interface{}) {
 	if l == nil {
 		return
 	}
+	l.initEntry()
 	l.levelFuncMap[level](args...)
+	l.entry = nil
 }
 
 // Logf ...
@@ -118,5 +134,13 @@ func (l *Logger) Logf(level Level, format string, args ...interface{}) {
 	if l == nil {
 		return
 	}
+	l.initEntry()
 	l.levelFuncfMap[level](format, args...)
+	l.entry = nil
+}
+
+func (l *Logger) initEntry() {
+	if l.entry == nil {
+		l.entry = logrus.WithField("appName", l.appName)
+	}
 }

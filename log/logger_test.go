@@ -1,6 +1,10 @@
 package log
 
-import "testing"
+import (
+	"bytes"
+	"fmt"
+	"testing"
+)
 
 type params struct {
 	appName string
@@ -10,6 +14,27 @@ type params struct {
 type expect struct {
 	ok  bool
 	err error
+}
+
+func TestLog(t *testing.T) {
+	stdout := new(bytes.Buffer)
+	l, err := NewLogger("TestApp", WithOutput(stdout))
+	if err != nil {
+		panic(err)
+	}
+
+	l.Log(I, "Test")
+	fmt.Print(stdout.String())
+	stdout.Reset()
+
+	l.WithField("AddKey1", "AddVal1").Log(I, "Test")
+	fmt.Print(stdout.String())
+	stdout.Reset()
+
+	l.WithField("AddKey2", "AddVal2").Log(I, "Test2")
+	fmt.Print(stdout.String())
+	stdout.Reset()
+
 }
 
 func TestNewLogger(t *testing.T) {
