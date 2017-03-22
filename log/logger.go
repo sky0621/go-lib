@@ -144,3 +144,51 @@ func (l *Logger) initEntry() {
 		l.entry = logrus.WithField("appName", l.appName)
 	}
 }
+
+func (l *Logger) Debug(args ...interface{}) {
+	l.Log(D, args...)
+}
+
+func (l *Logger) Debugf(format string, args ...interface{}) {
+	l.Logf(D, format, args...)
+}
+
+func (l *Logger) Info(args ...interface{}) {
+	l.Log(I, args...)
+}
+
+func (l *Logger) Infof(format string, args ...interface{}) {
+	l.Logf(I, format, args...)
+}
+
+func (l *Logger) Warn(args ...interface{}) {
+	l.Log(W, args...)
+}
+
+func (l *Logger) Warnf(format string, args ...interface{}) {
+	l.Logf(W, format, args...)
+}
+
+func (l *Logger) Error(args ...interface{}) {
+	l.Log(E, args...)
+}
+
+func (l *Logger) Errorf(format string, args ...interface{}) {
+	l.Logf(E, format, args...)
+}
+
+func (l *Logger) Fatal(args ...interface{}) {
+	l.Log(F, args...)
+}
+
+func (l *Logger) Fatalf(format string, args ...interface{}) {
+	l.Logf(F, format, args...)
+}
+
+func (l *Logger) Panic(args ...interface{}) {
+	l.Log(P, args...)
+}
+
+func (l *Logger) Panicf(format string, args ...interface{}) {
+	l.Logf(P, format, args...)
+}
