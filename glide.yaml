@@ -1,4 +1,7 @@
 package: github.com/sky0621/go-lib
 import:
 - package: github.com/Sirupsen/logrus
-  version: ~0.11.2
+  version: ~0.11.5
+testImport:
+- package: github.com/uber-go/zap
+  version: ~1.3.0
